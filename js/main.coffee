@@ -1,15 +1,22 @@
 $ ->
   svg = $('svg')
-  $.get 'map.svg', (svgData) ->
-    $(svgData).find('svg>*').each ->
-      svg.append(this)
-    $.getJSON 'map.json', (mapData) ->
-      for id, region of mapData.regions
-        region.id = id
-        region = new Region(region)
-        view = new RegionView(model: region, el: svg.find('#' + id))
-    .error ->
-      alert "error parsing map json: #{arguments[2]}"
+  $.ajax
+    url: 'map.svg'
+    cache: false
+    success: (svgData) ->
+      $(svgData).find('svg>*').each ->
+        svg.append(this)
+      $.ajax
+        url: 'map.json'
+        dataType: 'json'
+        cache: false
+        success: (mapData) ->
+          for id, region of mapData.regions
+            region.id = id
+            region = new Region(region)
+            view = new RegionView(model: region, el: svg.find('#' + id))
+        error: ->
+          alert "error parsing map json: #{arguments[2]}"
 
 
 class Region extends Backbone.Model
