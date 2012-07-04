@@ -38,6 +38,7 @@ class RegionView extends Backbone.View
     [sumX / x.length, sumY / y.length]
 
   events:
+    'click': 'select'
     'mouseenter': 'hoverOn'
     'mouseleave': 'hoverOff'
 
@@ -48,6 +49,16 @@ class RegionView extends Backbone.View
   hoverOff: (e) ->
     @$el.css 'fill', @vacantColor
 
+  select: (e) ->
+    if e.shiftKey
+      window.selectedRegion = @model.id
+      window.regions[selectedRegion] = []
+    else
+      window.regions[selectedRegion].push(@model.id)
+      console.log(window.regions[selectedRegion])
+
   render: ->
+    # pass
 
-
+window.regions = {}
+window.selectedRegion = null
