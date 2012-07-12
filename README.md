@@ -4,6 +4,15 @@
 
 See [the wiki](https://github.com/seven1m/openwar/wiki) for discussion about the particulars of implementation and game play.
 
+## Local Dev
+
+You'll need Node.js, then run:
+
+    npm install
+    npm install -g coffee-script
+    npm install -g supervisor
+    supervisor app.coffee
+
 ## License
 
 Copyright (c) 2012, [Tim Morgan](http://timmorgan.org), MIT licensed

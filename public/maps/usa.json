@@ -1,4 +1,8 @@
 {
+  "geometry": {
+    "width":  1500,
+    "height": 800
+  },
   "bonus-regions": {
     "west":          {"name": "West",          "regions": ["AK", "HI", "CA", "WA", "OR", "ID", "NV", "AZ", "UT"]            },
     "midwest":       {"name": "Midwest",       "regions": ["SD", "ND", "MT", "WY", "CO", "KS", "NE"]                        },
