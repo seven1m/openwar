@@ -1,11 +1,13 @@
 {
-    "name": "application-name"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "~> 2.5.11"
-    , "jade": ">= 0.0.1"
-    , "connect-assets": "~> 2.2.1"
-    , "stylus": ">= 0.28.1"
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "~> 3.4.4",
+    "jade": ">= 0.0.1",
+    "connect-assets": "~> 2.2.1",
+    "stylus": ">= 0.28.1",
+    "sockjs": "~0.3.8",
+    "redis": "~0.9.0"
   }
 }
