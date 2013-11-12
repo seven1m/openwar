@@ -1,6 +1,7 @@
 class app.views.MapView extends Backbone.View
 
-  initialize: =>
+  initialize: (options)=>
+    @options = options || {}
     # fetch the map and meta info
     d3.text @options.ui_url, (err, svg) =>
       @markup = svg
