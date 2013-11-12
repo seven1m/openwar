@@ -6,7 +6,7 @@ See [the wiki](https://github.com/seven1m/openwar/wiki) for discussion about the
 
 ## Local Dev
 
-You'll need Node.js, then run:
+You'll need Node.js and Redis, then run:
 
     npm install
     npm install -g coffee-script
