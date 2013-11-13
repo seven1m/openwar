@@ -1,18 +1,16 @@
 window.app =
   models: {}
   views: {}
+  DEBUG: true
 
 $ ->
-  map = new app.views.MapView
-    el: $('#map')
-    ui_url: "/maps/usa.svg"
-    meta_url: "/maps/usa.json"
-  map.on 'ready', map.render
-  window.app.map = map
-
-sock = new SockJS('/echo')
-sock.onopen = ->
-  console.log('open')
-  sock.send('hello wurld')
-sock.onmessage = (e) -> console.log('message', e.data)
-sock.onclose = -> console.log('close')
+  if $('#map')[0]
+    game = new app.models.Game(
+      id: location.href.replace(/.*\//, '')
+      state: 'connecting'
+      players: []
+    )
+    app.main = new app.views.GameView(
+      model: game
+      sessionId: $('head').data('session-id')
+    ).render()

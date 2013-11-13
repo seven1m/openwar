@@ -1,9 +1,13 @@
 express = require('express')
 connect_assets = require('connect-assets')
 redis = require('redis')
-sockjs = require('sockjs')
+socketio = require('socket.io')
 http = require('http')
 path = require('path')
+crypto = require('crypto')
+Game = require('./game')
+
+day = 24 * 60 * 60 * 1000
 
 app = express()
 
@@ -15,8 +19,12 @@ app.use express.logger('dev')
 app.use express.json()
 app.use express.urlencoded()
 app.use express.methodOverride()
-app.use express.cookieParser('your secret here')
-app.use express.session()
+app.use express.cookieParser()
+app.use express.cookieSession(secret: 'your secret', cookie: {maxAge: 365 * day})
+app.use (req, res, next) ->
+  req.session.id ?= crypto.randomBytes(20).toString('hex')
+  res.locals.sessionId = req.session.id
+  next()
 app.use app.router
 app.use connect_assets()
 app.use require('stylus').middleware(path.join(__dirname, 'public'))
@@ -27,15 +35,18 @@ if 'development' == app.get('env')
 
 db = redis.createClient()
 
-echo = sockjs.createServer()
-echo.on 'connection', (conn) ->
-  conn.on 'data', (message) ->
-    conn.write(message)
-
 app.get '/', (req, res) ->
-  res.render 'play', sess: req.sessionID
+  res.render 'index',
+    newGameId: crypto.randomBytes(20).toString('hex')
 
 server = http.createServer(app)
-echo.installHandlers server, prefix: '/echo'
 server.listen app.get('port'), ->
   console.log 'Express server listening on port ' + app.get('port')
+
+io = socketio.listen(server)
+
+games = {}
+app.get '/play/:id', (req, res) ->
+  gameId = req.params.id
+  games[gameId] ?= new Game(gameId, db, io.of('/' + gameId))
+  res.render 'play'
