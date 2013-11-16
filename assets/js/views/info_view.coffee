@@ -1,5 +1,8 @@
 class app.views.InfoView extends Backbone.View
 
+  events:
+    'click #join': 'join'
+
   templates:
     players: Handlebars.compile("""
       <table>
@@ -10,6 +13,7 @@ class app.views.InfoView extends Backbone.View
         </tr>
         {{/each}}
       </table>
+      <a id='join' class='btn btn-primary'>Join Game</a>
     """)
 
   render: =>
@@ -21,6 +25,9 @@ class app.views.InfoView extends Backbone.View
       @templates.players(players: @model.get('players'))
     )
     @
+
+  join: =>
+    @model.trigger('join')
 
   playerName: =>
     if player = @model.get('player')

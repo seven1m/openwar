@@ -19,6 +19,12 @@ class app.views.GameView extends Backbone.View
       model: @model
     @info.render()
     @model.on 'change', @setupInfo
+    @model.on 'join', @join
+
+  join: =>
+    @sock.emit 'join', (state) =>
+      @model.set 'state', state
+      @info.render()
 
   render: =>
     @sock.on 'connect', =>

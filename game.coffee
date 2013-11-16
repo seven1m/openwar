@@ -12,19 +12,12 @@ class Game
   connect: (conn) =>
     conn.on 'connected', (data, cb) =>
       id = data.sessionId
-      @connections[id] ?= new Player(id, @, conn)
-      cb('connected')
-    #if !@players[id] and @playerCount() < @maxPlayers
-      #@players[id] = new Player(id, @, conn)
-      #@players[id].join()
-    #@checkState()
-
-  #join: =>
-    #id = conn.conn.id
-    #if !@players[id] and @playerCount() < @maxPlayers
-      #@players[id] = new Player(id, @, conn)
-      #@players[id].join()
-    #@checkState()
+      @connections[id] = new Player(id, @, conn)
+      console.log(@players)
+      if @players[id]
+        cb('joined')
+      else
+        cb('watching')
 
   playerCount: =>
     Object.keys(@players).length
@@ -48,24 +41,9 @@ class Player
     @name = "Player #{@game.playerCount() + 1}"
     @score = 0
     @armies = 0
-    @conn.on 'data', (msg) ->
-      data = JSON.parse(msg)
-      if action = @[data.action]
-        action(data)
-
-  create: (data) =>
-    # TODO only allow name change
-    @set(data)
-
-  data: =>
-    name: @name
-    score: @score
-    armies: @armies
-
-  send: (action, data) =>
-    data.action = action
-    console.log(@id, data)
-    @conn.write JSON.stringify(data)
-
+    @conn.on 'join', (cb) =>
+      @game.players[@id] = @
+      console.log(@game.players)
+      cb('joined')
 
 module.exports = Game
