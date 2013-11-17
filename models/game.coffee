@@ -11,7 +11,6 @@ class Game extends SyncedModel
     delete data.players
     if data.player
       players = @get('players')
-      rconsole.log([data.player.id, players.pluck('id')])
       unless players.get(data.player.id)
         players.add(data.player)
         data.players = players

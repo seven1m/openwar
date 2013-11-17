@@ -5,13 +5,15 @@ class SyncedModel extends Backbone.Model
   initialize: =>
     sock = @attributes.sock
     delete @attributes.sock
-    sock.on 'connection', (@sock) =>
-      @sock.on 'sync', (data, cb) =>
+    @connections ?= {}
+    sock.on 'connection', (sock) =>
+      @connections[sock.id] = sock
+      sock.on 'sync', (data, cb) =>
         if data.class == @class
-          rconsole.log 'got data', data
           @set(@incoming(data.data))
-          rconsole.log 'data is now', @attributes
-          cb @outgoing()
+          @sync()
+      sock.on 'disconnect', =>
+        delete @connections[sock.id]
 
   # by default, accept all data from other side
   incoming: (attrs) => attrs
@@ -24,7 +26,10 @@ class SyncedModel extends Backbone.Model
     @send 'sync', @outgoing(), cb
 
   send: (method, data, cb) =>
-    console.log('sending data from server', method, data)
-    @sock.emit(method, data, cb)
+    data =
+      class: @class
+      data: data
+    for sock_id, sock of @connections
+      sock.emit(method, data, cb)
 
 module.exports = SyncedModel
