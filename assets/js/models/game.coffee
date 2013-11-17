@@ -1,2 +1,3 @@
-class app.models.Game extends Backbone.Model
+class app.models.Game extends Backbone.SyncedModel
 
+  class: 'game'

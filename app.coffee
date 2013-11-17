@@ -5,7 +5,9 @@ socketio = require('socket.io')
 http = require('http')
 path = require('path')
 crypto = require('crypto')
-Game = require('./game')
+require('./lib/synced_model')
+Game = require('./models/game')
+Backbone = require('backbone')
 
 day = 24 * 60 * 60 * 1000
 
@@ -43,10 +45,19 @@ server = http.createServer(app)
 server.listen app.get('port'), ->
   console.log 'Express server listening on port ' + app.get('port')
 
-io = socketio.listen(server)
-
 games = {}
+
+global.io = socketio.listen(server)
+global.rconsole =
+  log: ->
+    for id of io.sockets.manager.namespaces
+      io.of(id).emit 'log', Array.prototype.slice.call(arguments)
+
 app.get '/play/:id', (req, res) ->
   gameId = req.params.id
-  games[gameId] ?= new Game(gameId, db, io.of('/' + gameId))
+  games[gameId] ?= new Game
+    id: gameId
+    sock: io.of('/' + gameId)
+    players: new Backbone.Collection()
+  # TODO clean up old games that haven't been played in a long while
   res.render 'play'

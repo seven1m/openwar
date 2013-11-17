@@ -4,5 +4,6 @@
 #= require handlebars
 #= require d3.v3.min
 #= require app
+#= require lib/synced_model
 #= require_tree models
 #= require_tree views

@@ -13,6 +13,7 @@ class app.views.InfoView extends Backbone.View
         </tr>
         {{/each}}
       </table>
+      <input id="name" name="name" placeholder="Your Name"/>
       <a id='join' class='btn btn-primary'>Join Game</a>
     """)
 
@@ -27,7 +28,8 @@ class app.views.InfoView extends Backbone.View
     @
 
   join: =>
-    @model.trigger('join')
+    @model.trigger 'join',
+      name: @$el.find('#name').val()
 
   playerName: =>
     if player = @model.get('player')
