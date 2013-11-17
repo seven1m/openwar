@@ -1,11 +1,19 @@
 SyncedModel = require('../lib/synced_model')
 Player = require('./player')
+Backbone = require('backbone')
 _ = require('underscore')
 
 class Game extends SyncedModel
 
   class: 'game'
 
+  initialize: =>
+    super
+    unless @get('players') instanceof Backbone.Collection
+      @set 'players', new Backbone.Collection(@get('players'))
+    @get('players').on 'change add remove', =>
+      @trigger('change')
+  
   incoming: (data) =>
     # TODO whitelist game attrs that client can set
     delete data.players

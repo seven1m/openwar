@@ -6,14 +6,14 @@ class SyncedModel extends Backbone.Model
     sock = @attributes.sock
     delete @attributes.sock
     @connections ?= {}
-    sock.on 'connection', (sock) =>
-      @connections[sock.id] = sock
-      sock.on 'sync', (data, cb) =>
+    sock.on 'connection', (conn) =>
+      @connections[conn.id] = conn
+      conn.on 'sync', (data, cb) =>
         if data.class == @class
           @set(@incoming(data.data))
           @sync()
-      sock.on 'disconnect', =>
-        delete @connections[sock.id]
+      conn.on 'disconnect', =>
+        delete @connections[conn.id]
 
   # by default, accept all data from other side
   incoming: (attrs) => attrs

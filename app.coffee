@@ -55,9 +55,22 @@ global.rconsole =
 
 app.get '/play/:id', (req, res) ->
   gameId = req.params.id
-  games[gameId] ?= new Game
-    id: gameId
-    sock: io.of('/' + gameId)
-    players: new Backbone.Collection()
+  unless games[gameId]
+    db.get gameId, (err, data) ->
+      sock = io.of('/' + gameId)
+      if err or not data
+        game = new Game
+          id: gameId
+          sock: sock
+          players: new Backbone.Collection()
+      else
+        data = JSON.parse(data)
+        data.sock = sock
+        game = new Game(data)
+      games[gameId] = game
+      game.on 'change', ->
+        console.log 'setting data', JSON.stringify(game)
+        db.set gameId, JSON.stringify(game)
+      game.trigger 'change'
   # TODO clean up old games that haven't been played in a long while
   res.render 'play'
