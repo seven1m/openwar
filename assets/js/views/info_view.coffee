@@ -1,10 +1,15 @@
 class app.views.InfoView extends Backbone.View
 
   events:
+    'submit #join-form': 'join'
     'click #join': 'join'
+    'click #leave': 'leave'
 
   templates:
-    players: Handlebars.compile("""
+    info: Handlebars.compile """
+      <h2>{{player.name}}</h2>
+      <p>Status: {{status}}</p>
+      <p>Players:</p>
       <table>
         {{#each players}}
         <tr>
@@ -13,17 +18,26 @@ class app.views.InfoView extends Backbone.View
         </tr>
         {{/each}}
       </table>
-      <input id="name" name="name" placeholder="Your Name"/>
-      <a id='join' class='btn btn-primary'>Join Game</a>
-    """)
+      {{#unless players}}
+        <p><em>no one has joined yet</em></p>
+      {{/unless}}
+      {{#if player}}
+        <a id='leave' class='btn btn-danger'>Leave Game</a>
+      {{else}}
+        <form id='join-form'>
+          <input id="name" name="name" placeholder="Your Name"/>
+          <a id='join' class='btn btn-primary'>Join Game</a>
+        </form>
+      {{/if}}
+    """
 
   render: =>
-    @$el.find('#player .name').html(@playerName())
-    @$el.find('#state').html(
-      @model.get('state')
-    )
-    @$el.find('#players').html(
-      @templates.players(players: @model.get('players'))
+    player = @model.get('player')
+    @$el.html(
+      @templates.info
+        status: @model.get('status')
+        players: @model.get('players')
+        player: player and player.attributes
     )
     @
 
@@ -31,6 +45,6 @@ class app.views.InfoView extends Backbone.View
     @model.trigger 'join',
       name: @$el.find('#name').val()
 
-  playerName: =>
-    if player = @model.get('player')
-      player.name
+  leave: =>
+    if confirm('Click OK to leave this game.')
+      @model.trigger 'leave'

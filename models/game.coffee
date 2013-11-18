@@ -19,16 +19,21 @@ class Game extends SyncedModel
     delete data.players
     if data.player
       players = @get('players')
-      unless players.get(data.player.id)
+      p = players.get(data.player.id)
+      if data.player.remove
+        players.remove(p)
+      else if not p
         players.add(data.player)
-        data.players = players
+      data.players = players
       delete data.player
     data
 
-  outgoing: =>
+  outgoing: (sessionId) =>
     attrs = _.clone(@attributes)
     attrs.players = attrs.players.map (p) ->
       name: p.get('name')
+    player = @get('players').get(sessionId)
+    attrs.player = if player then player.attributes else null
     attrs
 
 module.exports = Game

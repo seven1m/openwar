@@ -12,6 +12,9 @@ class SyncedModel extends Backbone.Model
         if data.class == @class
           @set(@incoming(data.data))
           @sync()
+      conn.on 'identify', (sessionId, cb) =>
+        conn.sessionId = sessionId
+        cb()
       conn.on 'disconnect', =>
         delete @connections[conn.id]
 
@@ -23,13 +26,12 @@ class SyncedModel extends Backbone.Model
 
   # sync data to the other side
   sync: (cb) =>
-    @send 'sync', @outgoing(), cb
+    for sock_id, sock of @connections
+      data =
+        class: @class
+        data: @outgoing(sock.sessionId)
+      sock.emit('sync', data, cb)
 
   send: (method, data, cb) =>
-    data =
-      class: @class
-      data: data
-    for sock_id, sock of @connections
-      sock.emit(method, data, cb)
 
 module.exports = SyncedModel

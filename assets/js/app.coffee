@@ -12,8 +12,10 @@ $ ->
     sock.on 'log', (data) ->
       console.log.apply(console, data)
 
+    sessionId = $('head').data('session-id')
+
     player = new app.models.Player
-      id: $('head').data('session-id')
+      id: sessionId
       sock: sock
 
     game = new app.models.Game(
@@ -26,6 +28,12 @@ $ ->
       game.set('player', player)
       game.sync()
 
+    game.on 'leave', =>
+      game.set 'player',
+        id: sessionId
+        remove: true
+      game.sync()
+
     map = new app.views.MapView
       el: $('#map')
       ui_url: "/maps/usa.svg"
@@ -35,7 +43,6 @@ $ ->
     info = new app.views.InfoView
       el: $('#info')
       model: game
-    info.render()
 
     game.on 'change', ->
       map.render()
@@ -45,5 +52,7 @@ $ ->
       info.render()
 
     sock.on 'connect', =>
-      game.sync()
-      player.sync()
+      sock.emit 'identify', sessionId, =>
+        game.sync()
+
+    app.game = game
