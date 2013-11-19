@@ -16,12 +16,10 @@ $ ->
 
     player = new app.models.Player
       id: sessionId
-      sock: sock
 
-    game = new app.models.Game(
+    game = new app.models.Game
       id: gameId
       sock: sock
-    )
 
     game.on 'join', (data) =>
       player.set('name', data.name)
@@ -29,9 +27,7 @@ $ ->
       game.sync()
 
     game.on 'leave', =>
-      game.set 'player',
-        id: sessionId
-        remove: true
+      game.set 'remove_player', sessionId
       game.sync()
 
     map = new app.views.MapView

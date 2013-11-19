@@ -1,4 +1,4 @@
-class Backbone.SyncedModel extends Backbone.Model
+class Backbone.SyncedModel extends Backbone.RelationalModel
 
   initialize: =>
     @sock = @attributes.sock

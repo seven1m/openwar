@@ -1,7 +1,7 @@
-SyncedModel = require('../lib/synced_model')
+Backbone = require('backbone')
+require('backbone-relational')
 
-class Player extends SyncedModel
+class Player extends Backbone.RelationalModel
 
-  class: 'player'
 
 module.exports = Player

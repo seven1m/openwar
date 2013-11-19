@@ -1,6 +1,7 @@
 Backbone = require('backbone')
+require('backbone-relational')
 
-class SyncedModel extends Backbone.Model
+class SyncedModel extends Backbone.RelationalModel
 
   initialize: =>
     sock = @attributes.sock

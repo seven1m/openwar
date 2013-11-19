@@ -2,9 +2,16 @@ class app.models.Game extends Backbone.SyncedModel
 
   class: 'game'
 
-  incoming: (data) =>
-    if data.player and data.player not instanceof app.models.Player
-      if d = data.player
-        d.sock = @sock
-        data.player = new app.models.Player(d)
-    data
+  relations: [
+    {
+      type: Backbone.HasMany,
+      key: 'players',
+      relatedModel: 'app.models.Player',
+      collectionType: Backbone.Collection,
+    },
+    {
+      type: Backbone.HasOne,
+      key: 'player',
+      relatedModel: 'app.models.Player'
+    }
+  ]

@@ -1,3 +1,2 @@
-class app.models.Player extends Backbone.SyncedModel
+class app.models.Player extends Backbone.RelationalModel
 
-  class: 'player'

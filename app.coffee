@@ -6,7 +6,7 @@ http = require('http')
 path = require('path')
 crypto = require('crypto')
 require('./lib/synced_model')
-Game = require('./models/game')
+models = require('./models')
 Backbone = require('backbone')
 
 day = 24 * 60 * 60 * 1000
@@ -59,14 +59,14 @@ app.get '/play/:id', (req, res) ->
     db.get gameId, (err, data) ->
       sock = io.of('/' + gameId)
       if err or not data
-        game = new Game
+        game = new models.Game
           id: gameId
           sock: sock
           players: new Backbone.Collection()
       else
         data = JSON.parse(data)
         data.sock = sock
-        game = new Game(data)
+        game = new models.Game(data)
       games[gameId] = game
       game.on 'change', ->
         console.log 'setting data', JSON.stringify(game)

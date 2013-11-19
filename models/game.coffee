@@ -7,24 +7,37 @@ class Game extends SyncedModel
 
   class: 'game'
 
+  relations: [
+    {
+      type: Backbone.HasMany,
+      key: 'players',
+      relatedModel: 'Player',
+      collectionType: Backbone.Collection,
+    },
+    {
+      type: Backbone.HasOne,
+      key: 'player',
+      relatedModel: 'Player'
+    }
+  ]
+
   initialize: =>
     super
-    unless @get('players') instanceof Backbone.Collection
-      @set 'players', new Backbone.Collection(@get('players'))
-    @get('players').on 'change add remove', =>
-      @trigger('change')
+    #unless @get('players') instanceof Backbone.Collection
+      #@set 'players', new Backbone.Collection(@get('players'))
+    if players = @get('players')
+      players.on 'change add remove', =>
+        @trigger('change')
   
   incoming: (data) =>
     # TODO whitelist game attrs that client can set
     delete data.players
-    if data.player
-      players = @get('players')
-      p = players.get(data.player.id)
-      if data.player.remove
-        players.remove(p)
-      else if not p
-        players.add(data.player)
-      data.players = players
+    if id = data.remove_player
+      p = @get('players').get(id)
+      @get('players').remove(p)
+      data.remove_player = null
+    else if data.player
+      @get('players').add(data.player)
       delete data.player
     data
 

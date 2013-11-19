@@ -36,7 +36,7 @@ class app.views.InfoView extends Backbone.View
     @$el.html(
       @templates.info
         status: @model.get('status')
-        players: @model.get('players')
+        players: @model.get('players').toJSON()
         player: player and player.attributes
     )
     @
